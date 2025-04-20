@@ -13,6 +13,7 @@ let createdCount = 0
 
 const factory: IFactory<number> = {
     create() {
+        await Bun.sleep(100)
         return Promise.resolve(++createdCount)
     }
 }
@@ -25,6 +26,9 @@ console.log(await value.get()) // 1
 console.log(await value.invalidate()) // 2
 console.log(await value.get()) // 2
 console.log(await value.get()) // 2
+
+// It prevents concurrency calls to invalidate()
+console.log(await Promise.all([value.invalidate(), value.invalidate()])) // [3, 3]
 ```
 
 ## Dependencies
